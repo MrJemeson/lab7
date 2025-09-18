@@ -1,13 +1,27 @@
-package ru.bmstu.object;
+package ru.bmstu.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
-    private final int ID;
-    private final String FULL_NAME;
-    private final String ROLE;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int ID;
+
+    @Column(name = "full_name", nullable = false)
+    private String FULL_NAME;
+
+    @Column(name = "role", nullable = false)
+    private String ROLE;
+
+    @Column(name = "tokens")
     private Integer tokens;
 
-    public User(int id, String fullName, String role, Integer tokens) {
-        this.ID = id;
+    public User() {}
+
+    public User(String fullName, String role, Integer tokens) {
         this.FULL_NAME = fullName;
         this.ROLE = role;
         this.tokens = tokens;
