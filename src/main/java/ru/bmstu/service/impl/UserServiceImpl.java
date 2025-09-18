@@ -1,14 +1,11 @@
 package ru.bmstu.service.impl;
 
-import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.bmstu.object.User;
+import ru.bmstu.entity.User;
 import ru.bmstu.repository.UserRepository;
 import ru.bmstu.service.UserService;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,13 +20,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(int id, int tokenDif){
-        List<User> users = userRepository.loadUsers();
+        List<User> users = userRepository.findAll();
         User user = users.stream().filter(x -> x.getID() == id).findFirst().orElseThrow(() -> new NoSuchElementException("User with id=" + id + " not found"));
         if (user.getTokens() + tokenDif < 0) {
             throw new IllegalArgumentException("Resulting tokens can't be negative");
         }
         user.setTokens(user.getTokens() + tokenDif);
-        userRepository.saveUsers(users);
+        userRepository.saveAllAndFlush(users);
         return user;
     }
 
@@ -44,24 +41,22 @@ public class UserServiceImpl implements UserService {
         if (!role.equals("Student") && !role.equals("Teacher")) {
             throw new IllegalArgumentException("Role must be 'Student' or 'Teacher'");
         }
-        List<User> users = userRepository.loadUsers();
-        User newUser = new User(users.stream().mapToInt(User::getID).max().orElse(0)+1, fullName, role, ((role.equals("Student"))?(10):(null)));
-        users.add(newUser);
-        userRepository.saveUsers(users);
+        List<User> users = userRepository.findAll();
+        User newUser = new User(fullName, role, ((role.equals("Student"))?(10):(null)));
+        userRepository.saveAndFlush(newUser);
         return newUser;
     }
 
     @Override
     public User deleteUser(int id){
-        List<User> users = userRepository.loadUsers();
+        List<User> users = userRepository.findAll();
         User user = users.stream().filter(x -> x.getID() == id).findFirst().orElseThrow(() -> new NoSuchElementException("User with id=" + id + " not found"));
-        users.remove(user);
-        userRepository.saveUsers(users);
+        userRepository.deleteById(id);
         return user;
     }
 
     @Override
     public List<User> getUsers(){
-        return userRepository.loadUsers();
+        return userRepository.findAll();
     }
 }
