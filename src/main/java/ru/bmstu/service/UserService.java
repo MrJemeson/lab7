@@ -2,17 +2,17 @@ package ru.bmstu.service;
 
 
 import jakarta.transaction.Transactional;
-import ru.bmstu.entity.User;
+import ru.bmstu.entity.UserLocal;
 
 import java.util.List;
 
 public interface UserService {
     @Transactional
-    User updateUser(int id, int token);
+    UserLocal updateUser(int id, int token);
     @Transactional
-    User addUser(String fullName, String role);
+    UserLocal addUser(String fullName, String role, String password);
     @Transactional
-    User deleteUser(int id);
+    UserLocal deleteUser(int id);
     @Transactional
-    List<User> getUsers();
+    List<UserLocal> getUsers();
 }

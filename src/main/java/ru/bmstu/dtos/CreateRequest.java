@@ -1,7 +1,8 @@
-package ru.bmstu.dto;
+package ru.bmstu.dtos;
 
 public class CreateRequest {
     private String fullName;
+    private String password;
     private String role;
     private Integer tokens;
 
@@ -34,5 +35,13 @@ public class CreateRequest {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
