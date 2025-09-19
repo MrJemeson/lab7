@@ -1,26 +1,33 @@
 package ru.bmstu.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import ru.bmstu.dto.CreateRequest;
-import ru.bmstu.dto.ErrorResponse;
-import ru.bmstu.dto.SuccessResponse;
-import ru.bmstu.dto.UpdateRequest;
-import ru.bmstu.entity.User;
+import ru.bmstu.dtos.*;
+import ru.bmstu.entity.UserLocal;
 import ru.bmstu.service.UserService;
 
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("api/v2")
 public class MainController {
     private static UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public MainController(UserService userService) {
+    public MainController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
         MainController.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/getStatus")
@@ -29,108 +36,76 @@ public class MainController {
     }
 
     @GetMapping("/users/{id}")
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "OK", response = SuccessResponse.class),
-//            @ApiResponse(code = 400, message = "Bad Request", response = ErrorResponse.class),
-//            @ApiResponse(code = 404, message = "Not Found", response = ErrorResponse.class),
-//            @ApiResponse(code = 500, message = "Internal Server Error", response = ErrorResponse.class)
-//    })
-    public ResponseEntity<?> getStudentById(@PathVariable int id){
-        try {
-            User targetUser = userService.getUsers().stream().filter(x -> x.getID() == id).findFirst().orElseThrow(() -> new NoSuchElementException("User with id=" + id + " not found"));
-            return ResponseEntity.ok(targetUser);
-        }  catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ErrorResponse("User not found", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Internal Server Error", e.getMessage()));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    public ResponseEntity<?> getUserById(@PathVariable int id){
+        UserLocal targetUserLocal = userService.getUsers().stream().filter(x -> x.getId() == id).findFirst().orElseThrow(() -> new NoSuchElementException("UserLocal with id=" + id + " not found"));
+        return ResponseEntity.ok(targetUserLocal);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/users")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "User-Credentials", value = "Full name",
-//                    required = true, paramType = "header", dataType = "string")
-//    })
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "OK", response = SuccessResponse.class),
-//            @ApiResponse(code = 201, message = "Created", response = SuccessResponse.class),
-//            @ApiResponse(code = 400, message = "Bad Request", response = ErrorResponse.class),
-//            @ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponse.class),
-//            @ApiResponse(code = 403, message = "Forbidden", response = ErrorResponse.class),
-//            @ApiResponse(code = 500, message = "Internal Server Error", response = ErrorResponse.class)
-//    })
-    public ResponseEntity<?> createUser(@RequestHeader("User-Credentials") String credentials,
-                                        @RequestBody CreateRequest request) {
-        try {
-            userService.addUser(request.getFullName(), request.getRole());
-            return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse("User created successfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Bad Request", e.getMessage()));
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Forbidden", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Internal Server Error", e.getMessage()));
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    public ResponseEntity<?> createUser(@RequestBody CreateRequest request,
+                                        Authentication authentication) {
+        boolean isTeacher = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TEACHER"));
+
+        if (!isTeacher && request.getRole().equals("Teacher")) {
+            throw new AccessDeniedException("Student cannot create Teacher");
         }
+        userService.addUser(request.getFullName(), request.getRole(), passwordEncoder.encode(request.getPassword()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResponse("User created successfully"));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/users/{id}/tokens")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "User-Credentials", value = "Full name",
-//                    required = true, paramType = "header", dataType = "string")
-//    })
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "OK", response = SuccessResponse.class),
-//            @ApiResponse(code = 400, message = "Bad Request", response = ErrorResponse.class),
-//            @ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponse.class),
-//            @ApiResponse(code = 403, message = "Forbidden", response = ErrorResponse.class),
-//            @ApiResponse(code = 404, message = "Not Found", response = ErrorResponse.class),
-//            @ApiResponse(code = 500, message = "Internal Server Error", response = ErrorResponse.class)
-//    })
-    public ResponseEntity<?> updateUser(
-            @RequestHeader("User-Credentials") String credentials, @PathVariable int id,
-            @RequestBody UpdateRequest request) {
-        try {
-            userService.updateUser(id, request.getAmount());
-            return ResponseEntity.ok(new SuccessResponse("Tokens updated successfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Bad Request", e.getMessage()));
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Forbidden", e.getMessage()));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Not Found", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Internal Server Error", e.getMessage()));
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    public ResponseEntity<?> updateUser(@PathVariable int id,
+            @RequestBody UpdateRequest request,
+            Authentication authentication) {
+        boolean isTeacher = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TEACHER"));
+
+        if (!isTeacher && request.getAmount() > 0) {
+            throw new AccessDeniedException("Student cannot add tokens");
         }
+        userService.updateUser(id, request.getAmount());
+        return ResponseEntity.ok(new SuccessResponse("Tokens updated successfully"));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/users/{id}")
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "OK", response = SuccessResponse.class),
-//            @ApiResponse(code = 400, message = "Bad Request", response = ErrorResponse.class),
-//            @ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponse.class),
-//            @ApiResponse(code = 403, message = "Forbidden", response = ErrorResponse.class),
-//            @ApiResponse(code = 404, message = "Not Found", response = ErrorResponse.class),
-//            @ApiResponse(code = 500, message = "Internal Server Error", response = ErrorResponse.class)
-//    })
-    public ResponseEntity<?> deleteStudent(@RequestHeader("User-Credentials") String credentials,
-                                           @PathVariable int id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.ok(new SuccessResponse("Student deleted successfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Bad Request", e.getMessage()));
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse("Forbidden", e.getMessage()));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Not Found", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("Internal Server Error", e.getMessage()));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    public ResponseEntity<?> deleteStudent(@PathVariable int id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(new SuccessResponse("Student deleted successfully"));
     }
 
 }

@@ -1,4 +1,4 @@
-package ru.bmstu.dto;
+package ru.bmstu.dtos;
 
 public class UpdateRequest {
     private int amount;

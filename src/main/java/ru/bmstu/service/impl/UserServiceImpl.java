@@ -2,7 +2,7 @@ package ru.bmstu.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.bmstu.entity.User;
+import ru.bmstu.entity.UserLocal;
 import ru.bmstu.repository.UserRepository;
 import ru.bmstu.service.UserService;
 
@@ -19,19 +19,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(int id, int tokenDif){
-        List<User> users = userRepository.findAll();
-        User user = users.stream().filter(x -> x.getID() == id).findFirst().orElseThrow(() -> new NoSuchElementException("User with id=" + id + " not found"));
-        if (user.getTokens() + tokenDif < 0) {
+    public UserLocal updateUser(int id, int tokenDif){
+        List<UserLocal> users = userRepository.findAll();
+        UserLocal userLocal = users.stream().filter(x -> x.getId() == id).findFirst().orElseThrow(() -> new NoSuchElementException("UserLocal with id=" + id + " not found"));
+        if (userLocal.getTokens() + tokenDif < 0) {
             throw new IllegalArgumentException("Resulting tokens can't be negative");
         }
-        user.setTokens(user.getTokens() + tokenDif);
+        userLocal.setTokens(userLocal.getTokens() + tokenDif);
         userRepository.saveAllAndFlush(users);
-        return user;
+        return userLocal;
     }
 
     @Override
-    public User addUser(String fullName, String role){
+    public UserLocal addUser(String fullName, String role, String password){
         if (fullName== null || fullName.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
@@ -41,22 +41,22 @@ public class UserServiceImpl implements UserService {
         if (!role.equals("Student") && !role.equals("Teacher")) {
             throw new IllegalArgumentException("Role must be 'Student' or 'Teacher'");
         }
-        List<User> users = userRepository.findAll();
-        User newUser = new User(fullName, role, ((role.equals("Student"))?(10):(null)));
-        userRepository.saveAndFlush(newUser);
-        return newUser;
+        List<UserLocal> users = userRepository.findAll();
+        UserLocal newUserLocal = new UserLocal(fullName, role, password, ((role.equals("Student"))?(10):(null)));
+        userRepository.saveAndFlush(newUserLocal);
+        return newUserLocal;
     }
 
     @Override
-    public User deleteUser(int id){
-        List<User> users = userRepository.findAll();
-        User user = users.stream().filter(x -> x.getID() == id).findFirst().orElseThrow(() -> new NoSuchElementException("User with id=" + id + " not found"));
+    public UserLocal deleteUser(int id){
+        List<UserLocal> users = userRepository.findAll();
+        UserLocal userLocal = users.stream().filter(x -> x.getId() == id).findFirst().orElseThrow(() -> new NoSuchElementException("User with id=" + id + " not found"));
         userRepository.deleteById(id);
-        return user;
+        return userLocal;
     }
 
     @Override
-    public List<User> getUsers(){
+    public List<UserLocal> getUsers(){
         return userRepository.findAll();
     }
 }
