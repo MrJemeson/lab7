@@ -1,12 +1,12 @@
 package ru.bmstu.dtos;
 
-public class UpdateRequest {
+public class UpdateDto {
     private int amount;
 
-    public UpdateRequest() {
+    public UpdateDto() {
     }
 
-    public UpdateRequest(int amount) {
+    public UpdateDto(int amount) {
         this.amount = amount;
     }
 

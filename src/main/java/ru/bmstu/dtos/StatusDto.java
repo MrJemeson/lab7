@@ -1,12 +1,12 @@
 package ru.bmstu.dtos;
 
-public class StatusResponse {
+public class StatusDto {
     private String status;
 
-    public StatusResponse() {
+    public StatusDto() {
     }
 
-    public StatusResponse(String status) {
+    public StatusDto(String status) {
         this.status = status;
     }
 

@@ -22,13 +22,24 @@ public class UserLocal {
     @Column(name = "tokens")
     private Integer tokens;
 
+    @Column(name = "isDeleted", nullable = false)
+    private Boolean isDeleted;
+
     public UserLocal() {}
+
+    public UserLocal(String fullName, String role, Integer tokens) {
+        this.fullName = fullName;
+        this.role = role;
+        this.tokens = tokens;
+        isDeleted = false;
+    }
 
     public UserLocal(String fullName, String role, String password, Integer tokens) {
         this.fullName = fullName;
         this.role = role;
         this.password = password;
         this.tokens = tokens;
+        isDeleted = false;
     }
 
 
@@ -47,6 +58,12 @@ public class UserLocal {
     }
     public String getPassword() {
         return password;
+    }
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 
     @Override

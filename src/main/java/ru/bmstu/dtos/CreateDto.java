@@ -1,15 +1,15 @@
 package ru.bmstu.dtos;
 
-public class CreateRequest {
+public class CreateDto {
     private String fullName;
     private String password;
     private String role;
     private Integer tokens;
 
-    public CreateRequest() {
+    public CreateDto() {
     }
 
-    public CreateRequest(String fullName) {
+    public CreateDto(String fullName) {
         this.fullName = fullName;
     }
 

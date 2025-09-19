@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
         if (!role.equals("Student") && !role.equals("Teacher")) {
             throw new IllegalArgumentException("Role must be 'Student' or 'Teacher'");
         }
-        List<UserLocal> users = userRepository.findAll();
         UserLocal newUserLocal = new UserLocal(fullName, role, password, ((role.equals("Student"))?(10):(null)));
         userRepository.saveAndFlush(newUserLocal);
         return newUserLocal;
@@ -49,14 +48,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserLocal deleteUser(int id){
-        List<UserLocal> users = userRepository.findAll();
+        List<UserLocal> users = getUsers();
         UserLocal userLocal = users.stream().filter(x -> x.getId() == id).findFirst().orElseThrow(() -> new NoSuchElementException("User with id=" + id + " not found"));
-        userRepository.deleteById(id);
+        userLocal.setDeleted(true);
+        userRepository.save(userLocal);
         return userLocal;
     }
 
     @Override
     public List<UserLocal> getUsers(){
-        return userRepository.findAll();
+        return userRepository.findAll().stream().filter(x-> !x.getDeleted()).toList();
     }
 }

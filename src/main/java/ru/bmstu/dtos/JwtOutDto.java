@@ -1,13 +1,13 @@
 package ru.bmstu.dtos;
 
-public class JwtResponse {
+public class JwtOutDto {
     private String token;
 
-    public JwtResponse() {
+    public JwtOutDto() {
 
     }
 
-    public JwtResponse(String token) {
+    public JwtOutDto(String token) {
         this.token = token;
     }
 

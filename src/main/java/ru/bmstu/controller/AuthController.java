@@ -13,9 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.bmstu.dtos.ErrorResponse;
-import ru.bmstu.dtos.JwtRequest;
-import ru.bmstu.dtos.JwtResponse;
+import ru.bmstu.dtos.ErrorDto;
+import ru.bmstu.dtos.JwtInDto;
+import ru.bmstu.dtos.JwtOutDto;
 import ru.bmstu.service.UserServiceSec;
 import ru.bmstu.utils.JwtTokenUtil;
 
@@ -34,23 +34,23 @@ public class AuthController {
     @PostMapping
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = JwtResponse.class))),
+                    content = @Content(schema = @Schema(implementation = JwtOutDto.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    content = @Content(schema = @Schema(implementation = ErrorDto.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    content = @Content(schema = @Schema(implementation = ErrorDto.class)))
     })
-    public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest){
+    public ResponseEntity<?> createAuthToken(@RequestBody JwtInDto authRequest){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("Unauthorized", "Incorrect credentials"));
+                    .body(new ErrorDto("Unauthorized", "Incorrect credentials"));
         }
         UserDetails userDetails = userServiceSec.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtOutDto(token));
     }
 }

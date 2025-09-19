@@ -1,13 +1,13 @@
 package ru.bmstu.dtos;
 
-public class ErrorResponse {
+public class ErrorDto {
     private String error;
     private String message;
 
-    public ErrorResponse() {
+    public ErrorDto() {
     }
 
-    public ErrorResponse(String error, String message) {
+    public ErrorDto(String error, String message) {
         this.error = error;
         this.message = message;
     }

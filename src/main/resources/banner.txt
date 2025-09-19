@@ -1,0 +1,19 @@
+                                                                                                                                                                                                 bbbbbbbb
+                                              BBBBBBBBBBBBBBBBB   MMMMMMMM               MMMMMMMM   SSSSSSSSSSSSSSS TTTTTTTTTTTTTTTTTTTTTTTUUUUUUUU     UUUUUUUU        lllllll                  b::::::b         77777777777777777777
+                                              B::::::::::::::::B  M:::::::M             M:::::::M SS:::::::::::::::ST:::::::::::::::::::::TU::::::U     U::::::U        l:::::l                  b::::::b         7::::::::::::::::::7
+                                              B::::::BBBBBB:::::B M::::::::M           M::::::::MS:::::SSSSSS::::::ST:::::::::::::::::::::TU::::::U     U::::::U        l:::::l                  b::::::b         7::::::::::::::::::7
+                                              BB:::::B     B:::::BM:::::::::M         M:::::::::MS:::::S     SSSSSSST:::::TT:::::::TT:::::TUU:::::U     U:::::UU        l:::::l                   b:::::b         777777777777:::::::7
+rrrrr   rrrrrrrrr   uuuuuu    uuuuuu            B::::B     B:::::BM::::::::::M       M::::::::::MS:::::S            TTTTTT  T:::::T  TTTTTT U:::::U     U:::::U          l::::l   aaaaaaaaaaaaa   b:::::bbbbbbbbb            7::::::7
+r::::rrr:::::::::r  u::::u    u::::u            B::::B     B:::::BM:::::::::::M     M:::::::::::MS:::::S                    T:::::T         U:::::D     D:::::U          l::::l   a::::::::::::a  b::::::::::::::bb         7::::::7
+r:::::::::::::::::r u::::u    u::::u            B::::BBBBBB:::::B M:::::::M::::M   M::::M:::::::M S::::SSSS                 T:::::T         U:::::D     D:::::U          l::::l   aaaaaaaaa:::::a b::::::::::::::::b       7::::::7
+rr::::::rrrrr::::::ru::::u    u::::u            B:::::::::::::BB  M::::::M M::::M M::::M M::::::M  SS::::::SSSSS            T:::::T         U:::::D     D:::::U          l::::l            a::::a b:::::bbbbb:::::::b     7::::::7
+ r:::::r     r:::::ru::::u    u::::u            B::::BBBBBB:::::B M::::::M  M::::M::::M  M::::::M    SSS::::::::SS          T:::::T         U:::::D     D:::::U          l::::l     aaaaaaa:::::a b:::::b    b::::::b    7::::::7
+ r:::::r     rrrrrrru::::u    u::::u            B::::B     B:::::BM::::::M   M:::::::M   M::::::M       SSSSSS::::S         T:::::T         U:::::D     D:::::U          l::::l   aa::::::::::::a b:::::b     b:::::b   7::::::7
+ r:::::r            u::::u    u::::u            B::::B     B:::::BM::::::M    M:::::M    M::::::M            S:::::S        T:::::T         U:::::D     D:::::U          l::::l  a::::aaaa::::::a b:::::b     b:::::b  7::::::7
+ r:::::r            u:::::uuuu:::::u            B::::B     B:::::BM::::::M     MMMMM     M::::::M            S:::::S        T:::::T         U::::::U   U::::::U          l::::l a::::a    a:::::a b:::::b     b:::::b 7::::::7
+ r:::::r            u:::::::::::::::uu        BB:::::BBBBBB::::::BM::::::M               M::::::MSSSSSSS     S:::::S      TT:::::::TT       U:::::::UUU:::::::U         l::::::la::::a    a:::::a b:::::bbbbbb::::::b7::::::7
+ r:::::r             u:::::::::::::::u ...... B:::::::::::::::::B M::::::M               M::::::MS::::::SSSSSS:::::S      T:::::::::T        UU:::::::::::::UU   ...... l::::::la:::::aaaa::::::a b::::::::::::::::b7::::::7
+ r:::::r              uu::::::::uu:::u .::::. B::::::::::::::::B  M::::::M               M::::::MS:::::::::::::::SS       T:::::::::T          UU:::::::::UU     .::::. l::::::l a::::::::::aa:::ab:::::::::::::::b7::::::7
+ rrrrrrr                uuuuuuuu  uuuu ...... BBBBBBBBBBBBBBBBB   MMMMMMMM               MMMMMMMM SSSSSSSSSSSSSSS         TTTTTTTTTTT            UUUUUUUUU       ...... llllllll  aaaaaaaaaa  aaaabbbbbbbbbbbbbbbb77777777
+
+
