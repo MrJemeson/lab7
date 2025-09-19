@@ -1,13 +1,13 @@
 package ru.bmstu.dtos;
 
-public class JwtRequest {
+public class JwtInDto {
     private String username;
     private String password;
 
-    public JwtRequest() {
+    public JwtInDto() {
     }
 
-    public JwtRequest(String username, String password) {
+    public JwtInDto(String username, String password) {
         this.username = username;
         this.password = password;
     }

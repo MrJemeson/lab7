@@ -31,6 +31,9 @@ public class UserServiceSec implements UserDetailsService {
         UserLocal userLocal = userRepository.findByFullName(username).orElseThrow(() -> new UsernameNotFoundException(
                 String.format("User '%s' not found", username)
         ));
+        if(userLocal.getDeleted()) {
+            throw new UsernameNotFoundException(String.format("User '%s' is deleted", username));
+        }
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_"+userLocal.getRole().toUpperCase()));
         User user = new User(userLocal.getFullName(), userLocal.getPassword(), authorities);

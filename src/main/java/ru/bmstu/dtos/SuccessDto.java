@@ -1,12 +1,12 @@
 package ru.bmstu.dtos;
 
-public class SuccessResponse {
+public class SuccessDto {
     private String message;
 
-    public SuccessResponse() {
+    public SuccessDto() {
     }
 
-    public SuccessResponse(String message) {
+    public SuccessDto(String message) {
         this.message = message;
     }
 
