@@ -29,22 +29,22 @@ public class ExceptionController {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorDto> handleEmptyBody(HttpMessageNotReadableException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto("Bad Request", "Request body is required"));
-    } // 400
+    }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorDto> handleNoSuchElementException(NoSuchElementException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto("Not Found", e.getMessage()));
-    } // 404
+    }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorDto> handleNoHandlerFound(NoHandlerFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto("Not Found", "Endpoint not found"));
-    } // 404
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleGenericException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDto("Internal Server Error", e.getMessage()));
-    } // 500
+    }
 
 
 }
