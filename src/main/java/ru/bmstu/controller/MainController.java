@@ -23,13 +23,13 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("api/v2")
 public class MainController {
-    private static UserService userService;
+    private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
     @Autowired
     public MainController(UserService userService, BCryptPasswordEncoder passwordEncoder, UserMapper userMapper) {
-        MainController.userService = userService;
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
