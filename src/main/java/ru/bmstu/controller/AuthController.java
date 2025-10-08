@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.bmstu.dtos.ErrorDto;
 import ru.bmstu.dtos.JwtInDto;
 import ru.bmstu.dtos.JwtOutDto;
+import ru.bmstu.exception.CustomBadCredentialsException;
 import ru.bmstu.service.UserServiceSec;
 import ru.bmstu.utils.JwtTokenUtil;
 
@@ -42,15 +43,14 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = @Content(schema = @Schema(implementation = ErrorDto.class)))
     })
-    public ResponseEntity<?> createAuthToken(@RequestBody JwtInDto authRequest){
+    public JwtOutDto createAuthToken(@RequestBody JwtInDto authRequest){
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorDto("Unauthorized", "Incorrect credentials"));
+            throw new CustomBadCredentialsException("Invalid username or password");
         }
         UserDetails userDetails = userServiceSec.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtOutDto(token));
+        return new JwtOutDto(token);
     }
 }
